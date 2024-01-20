@@ -1,4 +1,4 @@
-## JuanFi onLogin/onLogout v7.1a
+## JuanFi onLogin/onLogout v6
 - no need to define hotspot folder! (copyright)
 - recommended for beginners!
 
