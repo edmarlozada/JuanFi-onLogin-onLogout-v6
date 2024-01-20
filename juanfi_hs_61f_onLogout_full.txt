@@ -1,0 +1,34 @@
+# juanfi_hs_61f_onLogout_full
+# by: Chloe Renae & Edmar Lozada
+# ------------------------------
+
+local iUser $username
+local aUser [/ip hotspot user get $iUser]
+local iUserTime ($aUser->"limit-uptime")
+local iUsedTime ($aUser->"uptime")
+local iValidity 0s
+
+# Check Expiration
+if ($cause="traffic limit reached" || ($iUserTime>0 && $iUserTime<=$iUsedTime)) do={
+  local iDMac $"mac-address"
+  local iDInt $interface
+  local iHotSpot [/ip hotspot profile get [.. get [find interface=$iDInt] profile] html-directory]
+  local iMacFile ""
+  for i from=0 to=([len $iDMac]-1) do={
+    local x [pick $iDMac $i]
+    if ($x=":") do={set x ""}
+    set iMacFile ($iMacFile.$x)
+  }
+  do {
+  if ([/system scheduler find name=$iUser]!="") do={
+    set iValidity [/system scheduler get [find name=$iUser] interval]
+  } else={log error "( $iUser ) ONLOGOUT ERROR! /system scheduler [$iUser] => NOT FOUND!"}
+  if ([len $iUserTime]=0) do={ set iUserTime "unli" }
+  log debug "EXPIRE USER ( TimeLimit ) => user=[$iUser] mac=[$iDMac] usertime=[$iUserTime] uptime=[$iUsedTime] validity=[$iValidity]"
+  /ip hotspot cookie remove [find user=$iUser]
+  /ip hotspot cookie remove [find mac-address=$iDMac]
+  /system scheduler  remove [find name=$iUser]
+  /ip hotspot user   remove [find name=$iUser]
+  /file remove [find name="$iHotSpot/data/$iMacFile.txt"]
+  } on-error={log error "( $iUser ) ONLOGOUT ERROR! Expire User Module"}
+}
