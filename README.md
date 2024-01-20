@@ -172,8 +172,8 @@ if ($iMail~"new" || $iMail~"extend") do={
     } on-error={log error "( $iUser ) ONLOGIN ERROR! Update $iSalesName Module"}
     return $iTotalAmt
   }
-  local iVendoToday [$eAddSales $iUser $iSaleAmt ("$interface-SalesToday") ("JuanFi Sales Daily ( $iVendTag )")]
-  local iVendoMonth [$eAddSales $iUser $iSaleAmt ("$interface-SalesMonth") ("JuanFi Sales Monthly ( $iVendTag )")]
+  local iSalesToday [$eAddSales $iUser $iSaleAmt "todayincome" "JuanFi Sales Today ( TOTAL )"]
+  local iSalesMonth [$eAddSales $iUser $iSaleAmt "monthlyincome" "JuanFi Sales Month ( TOTAL )"]
 
   # Telegram Reporting
   do {
